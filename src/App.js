@@ -50,10 +50,14 @@ filter
       e.preventDefault();
       //console.log(aluno);
       const alunosMap = [...alunos, aluno];
-      setAlunos(alunosMap);
+      if(aluno.email !== '' && alunos.filter(al => al.email === aluno.email).length === 0) {
 
-      // Limpar formulário
-      setAluno(valorInicial);
+        setAlunos(alunosMap);
+        
+        // Limpar formulário
+        setAluno(valorInicial);
+        handleReadOnly(false);
+      }
     }
 
     function handleChange(event) {
@@ -65,6 +69,7 @@ filter
     
     function editarAluno(aluno) {
       setAluno(aluno);
+      handleReadOnly(true);
     }
 
     function editarNovoAluno() {
@@ -73,6 +78,15 @@ filter
 
       alunos[indexAluno] = aluno;
       setAlunos([...alunos]);
+
+      // Limpar formulário
+      setAluno(valorInicial);
+      handleReadOnly(false);
+    }
+
+    function handleReadOnly(newValue) {
+      document.getElementById("cadButton").disabled = newValue;
+      document.getElementsByName("email")[0].readOnly = newValue;
     }
 
     return (
@@ -108,7 +122,7 @@ filter
           </div>
 
           <div className="row">
-            <button>Cadastrar</button>
+            <button id="cadButton">Cadastrar</button>
             <button type="button" onClick={editarNovoAluno}>Editar</button>
           </div>
         </form>
