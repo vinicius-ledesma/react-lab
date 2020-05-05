@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import Listagem from './components/Listagem'
+import Routes from './routes'
 import './App.css'
 
 
@@ -50,14 +53,11 @@ filter
       e.preventDefault();
       //console.log(aluno);
       const alunosMap = [...alunos, aluno];
-      if(aluno.email !== '' && alunos.filter(al => al.email === aluno.email).length === 0) {
-
         setAlunos(alunosMap);
         
         // Limpar formulário
         setAluno(valorInicial);
-        handleReadOnly(false);
-      }
+        //handleReadOnly(false);
     }
 
     function handleChange(event) {
@@ -68,8 +68,12 @@ filter
     }
     
     function editarAluno(aluno) {
-      setAluno(aluno);
-      handleReadOnly(true);
+
+      setAluno({
+        ...aluno,
+        isEdit: true
+      });
+      //handleReadOnly(true);
     }
 
     function editarNovoAluno() {
@@ -81,7 +85,7 @@ filter
 
       // Limpar formulário
       setAluno(valorInicial);
-      handleReadOnly(false);
+      //handleReadOnly(false);
     }
 
     function handleReadOnly(newValue) {
@@ -90,7 +94,7 @@ filter
     }
 
     return (
-      <>
+      <BrowserRouter>
         <form className="formulario" onSubmit={handleCadastrar}>
           <h3>Cadastro de Aluno</h3>
           <div className="row">
@@ -118,12 +122,21 @@ filter
               value={aluno.email}
               name="email"
               //readOnly={aluno.email !== '' ? true : false}
+              readOnly={aluno.isEdit}
               onChange={handleChange}/>
           </div>
 
+          {aluno.isEdit &&
+          <h3>Esse aluno está sendo editado</h3>
+          }
           <div className="row">
-            <button id="cadButton">Cadastrar</button>
-            <button type="button" onClick={editarNovoAluno}>Editar</button>
+            {!aluno.isEdit === true ? (
+              <button id="cadButton">Cadastrar</button>
+            ) : (
+              <button type="button" onClick={editarNovoAluno}>
+                Editar
+              </button>
+            )}
           </div>
         </form>
 
@@ -132,18 +145,14 @@ filter
 
         <ul>
           {alunos.map((aluno) => (
-            <li key={aluno.email}>
-              <span>Nome:</span> {aluno.nome}
-              <br/>
-              <span>Usuário:</span> {aluno.usuario}
-              <br/>
-              <span>Email:</span> {aluno.email}
-              <br/>
-              <button onClick={() => editarAluno(aluno)}>Editar Aluno</button>
-            </li>
+            <div key={aluno.email}>
+            <Listagem item={aluno} />
+            <button onClick={() => editarAluno(aluno)}>Editar Aluno</button>
+            </div>
           ))}
         </ul>
-        </>
+        <Routes />
+        </BrowserRouter>
     )
 }
 
