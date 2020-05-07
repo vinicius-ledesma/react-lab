@@ -60,3 +60,7 @@ form .row button {
 form .row button:hover {
     background: #dc6e43;
 }
+
+.errorMessage {
+    border: 2px solid #e22727;
+}
