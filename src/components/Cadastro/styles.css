@@ -3,6 +3,7 @@
 .container {
     display: flex;
     margin-top: 10px;
+    padding: 30px;
 }
 
 form {
@@ -31,20 +32,29 @@ form .row span {
 }
 
 form .row input {
-    width: 300px;
+    flex: 1;
     height: 30px;
     outline: none;
     padding-left: 10px;
     font-size: 18px;
 }
 
+form .row input:focus {
+    border: 2px solid #e25d27;
+}
+
+form .row input::placeholder {
+    color: #aaa;
+}
+
 form .row button {
     flex: 1;
-    height: 30px;
+    height: 40px;
     background: #e25d27;
     color: #fff;
     cursor: pointer;
     outline: none;
+    border: none;
 }
 
 form .row button:hover {
