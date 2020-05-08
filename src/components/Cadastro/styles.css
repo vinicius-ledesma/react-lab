@@ -64,3 +64,11 @@ form .row button:hover {
 .errorMessage {
     border: 2px solid #e22727;
 }
+
+.errorResponse {
+    color: #791a1a;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+}

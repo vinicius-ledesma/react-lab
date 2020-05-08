@@ -1,5 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 
+import api from '../../services/api';
+
 import "./styles.css"
 
 function Cadastro(){
@@ -13,13 +15,19 @@ function Cadastro(){
 
     const [user, setUser] = useState(valorInicial);
     const [messageError, setMessageError] = useState(null);
+    const [responseError, setResponseError] = useState(null);
 
     const ref = useRef(null);
 
     useEffect(() => {
         console.log(ref);
-        ref.current.focus();
-    },[ref])
+        if(ref.current) {
+            ref.current.focus();
+        }
+
+        const input = document.getElementsByName('name')[0];
+        input.focus();
+    },[])
 
     function handleChange(e) {
 
@@ -37,12 +45,25 @@ function Cadastro(){
         }
     }
 
+    function handleSubmit(e) {
+        e.preventDefault();
+        api.post('users', user)
+        .then(response => console.log(response))
+        .catch((err) => {
+            //setResponseError(err.message);
+            setResponseError(err.response.data.error);
+        })
+    }
+
     return(
         <div className="container">
-            <form>
+            <form onSubmit={handleSubmit}>
                 <h3>Cadastro de Usuário</h3>
+
+                <span className="errorResponse">{responseError}</span>
+
                 <div className="row">
-                    <input name="name" ref={ref} value={user.name} 
+                    <input name="name" autoFocus ref={ref} value={user.name} 
                     onChange={handleChange} placeholder="Nome" />
                 </div>
                 <div className="row">
