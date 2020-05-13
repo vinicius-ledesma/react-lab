@@ -1,4 +1,6 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
+
+import  { useHistory } from 'react-router-dom'
 
 import api from '../../services/api';
 
@@ -19,6 +21,8 @@ function Cadastro(){
 
     const ref = useRef(null);
 
+    const history = useHistory();
+
     useEffect(() => {
         console.log(ref);
         if(ref.current) {
@@ -29,31 +33,29 @@ function Cadastro(){
         input.focus();
     },[])
 
-    function handleChange(e) {
-
+    const handleChange = useCallback((e) => {
         setUser({
             ...user,
             [e.target.name]: e.target.value
         })
-    }
+    }, [user])
 
-    function verificaSenha() {
+    const verificaSenha = useCallback(() => {
         if(user.confirm_password !== user.password) {
             setMessageError('Senhas diferentes!');
         } else {
             setMessageError(null);
         }
-    }
+    },[user.confirm_password, user.password])
 
-    function handleSubmit(e) {
+    const handleSubmit = useCallback((e) => {
         e.preventDefault();
         api.post('users', user)
-        .then(response => console.log(response))
-        .catch((err) => {
-            //setResponseError(err.message);
-            setResponseError(err.response.data.error);
+        .then((response) => history.push('/listagem'))
+        .catch((error) => {
+            setResponseError(error.response.data);
         })
-    }
+    }, [history, user])
 
     return(
         <div className="container">
@@ -71,15 +73,16 @@ function Cadastro(){
                     onChange={handleChange} placeholder="Username" />
                 </div>
                 <div className="row">
-                    <input name="email" value={user.email} 
+                    <input type="email" name="email" value={user.email} 
                     onChange={handleChange} placeholder="E-mail"/>
                 </div>
                 <div className="row">
-                    <input name="password" value={user.password} 
+                    <input type="password" autoComplete="new-password" name="password" value={user.password} 
                     onChange={handleChange} placeholder="Senha"/>
                 </div>
                 <div className="row">
                     <input name="confirm_password" 
+                    type="password"
                     className={messageError && "errorMessage"}
                     value={user.confirm_password} 
                     onChange={handleChange}
