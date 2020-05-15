@@ -16,6 +16,21 @@ function Listagem() {
         .catch(error => console.log(error))
     }, [])
 
+    const infoReturnFilho = (dataFromChild) => {
+        console.log(dataFromChild);
+        if(dataFromChild){
+            api.get('/users')
+        .then(response => setUsers(response.data))
+        .catch(error => console.log(error))
+        }
+        setCurrentUser(null);
+    }
+
+    const fecharModal = () => {
+        console.log("Fechando...");
+        setCurrentUser(null);
+    }
+
     return(
         <div>
             <h3>Listagem de usuários</h3>
@@ -45,7 +60,7 @@ function Listagem() {
                     }
                 </tbody>
             </table>
-            {currentUser && <Editar usuario={currentUser}/>}
+            {currentUser && <Editar usuario={currentUser} callback={infoReturnFilho} callClose={fecharModal} />}
         </div>
     )
 }

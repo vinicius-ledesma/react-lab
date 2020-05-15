@@ -43,19 +43,37 @@ function Cadastro(){
     const verificaSenha = useCallback(() => {
         if(user.confirm_password !== user.password) {
             setMessageError('Senhas diferentes!');
+            return false;
         } else {
             setMessageError(null);
+            return true;
         }
     },[user.confirm_password, user.password])
 
+
+    const validation = useCallback(() => {
+        if(!user.name || !user.username || !user.email || !user.password || !user.confirm_password) {
+            setResponseError("Algum campo não foi preenchido!")
+            return false;
+        }
+        setResponseError(null);
+        return true;
+    },[user]);
+
     const handleSubmit = useCallback((e) => {
         e.preventDefault();
+        if(!validation()){
+            return;
+        }
+        if(!verificaSenha()) {
+            return;
+        }
         api.post('users', user)
         .then((response) => history.push('/listagem'))
         .catch((error) => {
             setResponseError(error.response.data);
         })
-    }, [history, user])
+    }, [history, user, validation, verificaSenha])
 
     return(
         <div className="container">
@@ -77,12 +95,13 @@ function Cadastro(){
                     onChange={handleChange} placeholder="E-mail"/>
                 </div>
                 <div className="row">
-                    <input type="password" autoComplete="new-password" name="password" value={user.password} 
+                    <input type="password" minLength="6" maxLength="8" autoComplete="new-password" name="password" value={user.password} 
                     onChange={handleChange} placeholder="Senha"/>
                 </div>
                 <div className="row">
                     <input name="confirm_password" 
                     type="password"
+                    minLength="6" maxLength="8"
                     className={messageError && "errorMessage"}
                     value={user.confirm_password} 
                     onChange={handleChange}
