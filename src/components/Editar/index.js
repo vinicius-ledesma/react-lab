@@ -1,12 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react';
 
-import { useHistory } from 'react-router-dom';
-
 import "./styles.css";
 
 import api from '../../services/api'
 
-function Editar({usuario, callback, callClose}) {
+function Editar({usuario, callback}) {
 
     const [user, setUser] = useState({
         name: '',
@@ -14,8 +12,6 @@ function Editar({usuario, callback, callClose}) {
         username: '',
         _id: ''
     });
-
-    const history = useHistory();
 
     useEffect(() => {
         setUser(usuario);
@@ -32,14 +28,18 @@ function Editar({usuario, callback, callClose}) {
         const id = user._id;
         api.put(`/users/${id}`, user)
         .then((resolve) => {
-            callback(true);
+            callback({
+                tipoAcao: 'sucessoEdit'
+            });
         })
         .catch((error) => console.log(error));
     },[callback, user]);
 
     const handleFechar = useCallback(() => {
-        callClose();
-    },[callClose])
+        callback({
+            tipoAcao: 'closeModal'
+        });
+    },[callback])
 
     return (
         <div className="modal">

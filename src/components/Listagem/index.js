@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 
 import api from '../../services/api'
 
@@ -10,31 +10,35 @@ function Listagem() {
 
     const [currentUser, setCurrentUser] = useState(null);
 
-    useEffect(() => {
+    const callApi = useCallback(() => {
         api.get('/users')
         .then(response => setUsers(response.data))
         .catch(error => console.log(error))
-    }, [])
+    },[])
 
-    const infoReturnFilho = (dataFromChild) => {
-        console.log(dataFromChild);
-        if(dataFromChild){
-            api.get('/users')
-        .then(response => setUsers(response.data))
-        .catch(error => console.log(error))
+    useEffect(() => {
+        callApi();
+    }, [callApi])
+
+    const callBackEdit = (dataFromChild) => {
+        const { tipoAcao } = dataFromChild;
+
+        if(tipoAcao === 'sucessoEdit') {
+            callApi();
+            setCurrentUser(null);
+        } else if(tipoAcao === 'closeModal') {
+            setCurrentUser(null);
         }
-        setCurrentUser(null);
     }
 
-    const fecharModal = () => {
-        console.log("Fechando...");
-        setCurrentUser(null);
-    }
+    const memoUserLength = useMemo(() => {
+        return users.length;
+    },[users])
 
     return(
         <div>
             <h3>Listagem de usuários</h3>
-            
+            <h1>Quantidade de usuários {memoUserLength}</h1>
             <table>
                 <thead>
                     <tr>
@@ -60,7 +64,7 @@ function Listagem() {
                     }
                 </tbody>
             </table>
-            {currentUser && <Editar usuario={currentUser} callback={infoReturnFilho} callClose={fecharModal} />}
+            {currentUser && <Editar usuario={currentUser} callback={callBackEdit} />}
         </div>
     )
 }
